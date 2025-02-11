@@ -5,18 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-    <% for (let i = 0; i < list.length; i++) { %>
-        <ul>
+<style>
+#token {
+  float: left;
+  padding-right: 30px;
+  padding-left: 30px;
 
-            <br> Name: <%- list[i].name %>
-            <br>Colors: <%- list[i].colors %>
-            <br>Power: <%- list[i].power %>
-            <br>Toughness: <%- list[i].toughness %>
-            <br><img src="<%= list[i].image %>">
-            
-</ul>
-<% } %>
+}
+#amount {
+  position: absolute;
+  color: yellow;
+  padding-left: 150px;
+}
+h1{
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+#box {
+  float: left;
+  
+}
+#create {
+  padding-bottom: 40px;
+}
+#button {
+ padding-left: 25px;
+}
+</style>
+<script src = "/socket.io/socket.io.js"></script>
+<body id="body">
+    <div id="create">
+
+        <select id="token">
+            <% for (let i = 0; i < list.length; i++) { %>
+                <option value="<%=list[i].name%>, <%=list[i].colors%>, <%=list[i].power%>, <%=list[i].toughness%>, <%=list[i].keywords%>"><%-list[i].name%> <%=list[i].colors%> <%=list[i].power%>/<%=list[i].toughness%> (<%=list[i].keywords%>)</option>
+                
+                <% } %>
+            </select>
+            <button onclick="addToken(document.getElementById('token').value)">Add Token</button>
+        </div>
+
+        <% for (let i = 0; i < board.length; i++) { %>
+          <div id="box">
+            <div id="token">
+              
+              <img onclick="increaseAmount(`<%=board[i][0]%>`)" src="<%=board[i][6]%>">
+            </div>
+            <div id="amount">
+              <h1><%-board[i][5]%></h1>
+            </div>
+            <div id="button">
+              <button onclick="removeToken(`<%=board[i][0]%>`)">Remove 1</button>
+              <button onclick="removeAll(`<%=board[i][0]%>`)">Remove All</button>
+            </div>
+          </div>
+          <% } %>
+<br>
+<br>
+<br>
 </body>
+<script>
+    const body = document.getElementById("body");
+    const socket = io();
 
+    socket.on('reload', function () {
+      location.reload();
+    })
+   
+  
+function increaseAmount(tokenName){
+  socket.emit('IncreaseAmount', tokenName)
+  
+}
+
+function addToken(values){
+
+    socket.emit('AddToken', values)
+}
+
+function removeToken(tokenName){
+
+socket.emit('removeToken', tokenName)
+}
+
+function removeAll(tokenName){
+
+socket.emit('removeAll', tokenName)
+}
+
+</script>
 </html>
