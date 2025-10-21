@@ -163,8 +163,8 @@ console.log(values);
 
 
 
-    socket.on('disconnect', function () {
-      console.log('user disconnected');
+    socket.on('send_message', function (id, person, message) {
+      console.log(message);
     });
   })
 
